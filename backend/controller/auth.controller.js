@@ -203,37 +203,36 @@ export const logOut = async (req, res) => {
 // ==================== GOOGLE LOGIN ====================
 export const googleLogin = async (req, res) => {
   try {
-    const { credential } = req.body;
+    const { token, credential } = req.body;
+    
+    // Support both 'token' and 'credential' for backwards compatibility
+    const idToken = token || credential;
 
     // 1. Validate input
-    if (!credential) {
+    if (!idToken) {
       return res.status(400).json({
         success: false,
-        message: "Google access token is required"
+        message: "Google ID token is required"
       });
     }
 
-    // 2. Get user info from Google using access token
-    let userInfo;
+    // 2. Verify Google ID token
+    let ticket;
     try {
-      const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: {
-          Authorization: `Bearer ${credential}`
-        }
+      ticket = await client.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
       });
-      if (!response.ok) {
-        throw new Error('Failed to get user info from Google');
-      }
-      userInfo = await response.json();
     } catch (error) {
-      console.error("Google user info fetch failed:", error);
+      console.error("Google token verification failed:", error);
       return res.status(401).json({
         success: false,
-        message: "Invalid Google access token"
+        message: "Invalid Google token"
       });
     }
 
-    const { id: googleId, email, name, picture, verified_email } = userInfo;
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture, email_verified } = payload;
 
     // 3. Check if user exists by email or googleId
     let user = await User.findOne({
@@ -251,7 +250,7 @@ export const googleLogin = async (req, res) => {
     if (!user.googleId) {
       user.googleId = googleId;
       user.authProvider = 'google';
-      user.isEmailVerified = verified_email || true;
+      user.isEmailVerified = email_verified || true;
       if (picture && !user.profilePicture) {
         user.profilePicture = picture;
       }
@@ -259,13 +258,13 @@ export const googleLogin = async (req, res) => {
     }
 
     // 5. Generate token
-    const token = await genToken(user._id);
+    const token_jwt = await genToken(user._id);
 
     // 6. Set cookie
-    res.cookie("token", token, {
+    res.cookie("token", token_jwt, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -273,7 +272,7 @@ export const googleLogin = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Google login successful",
-      token: token,
+      token: token_jwt,
       user: {
         id: user._id,
         name: user.name,

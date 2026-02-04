@@ -37,7 +37,7 @@ const authService = {
   // Google login
   googleLogin: async (credential) => {
     try {
-      const response = await api.post('/api/auth/google/login', { credential });
+      const response = await api.post('/api/auth/google/login', { token: credential });
       return response.data;
     } catch (error) {
       console.log('Google login error:', error);
