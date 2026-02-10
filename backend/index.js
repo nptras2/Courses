@@ -23,10 +23,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
   origin: [
-    "https://course-olive-one.vercel.app"
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://course-olive-one.vercel.app",
+    "https://courses-gamma-eosin.vercel.app"
   ],
   credentials: true
 }));
+
+// Handle preflight requests
+app.options("*", cors());
 
 
 // Routes
