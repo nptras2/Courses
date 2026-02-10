@@ -10,29 +10,41 @@ import orderrouter from "./routes/order.route.js";
 import testRoute from "./routes/test.route.js";
 import usersRoute from "./routes/users.route.js";
 import reportsRoute from "./routes/reports.route.js";
- 
- 
+
+
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
+// CORS configuration
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://course-olive-one.vercel.app",
+  "https://courses-gamma-eosin.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://course-olive-one.vercel.app",
-    "https://courses-gamma-eosin.vercel.app"
-  ],
-  credentials: true
-}));
-
-// Handle preflight requests
-app.options("*", cors());
 
 
 // Routes
@@ -44,7 +56,7 @@ app.use("/api/test", testRoute);
 app.use("/api/users", usersRoute);
 app.use("/api/reports", reportsRoute);
 
- 
+
 // Health check route
 app.get("/", (req, res) => {
   res.json({
@@ -107,27 +119,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
-const server = app.listen(port, async () => {
-  console.log(`✅ Server is running on: http://localhost:${port}`);
-  
-  // Connect to database
+// Start Server with DB connection first
+const startServer = async () => {
   try {
     await connectDb();
+
+    app.listen(port, () => {
+      console.log(`✅ Server running on port ${port}`);
+    });
+
   } catch (error) {
-    console.error("Failed to connect database:", error.message);
+    console.error("❌ Failed to start server:", error.message);
+    process.exit(1);
   }
-  
-   
-});
+};
 
-// Error handlers for server
-server.on('error', (error) => {
-  console.error('Server error:', error);
-  if (error.code === 'EADDRINUSE') {
-    console.error(`Port ${port} is already in use`);
-  }
-  process.exit(1);
-});
-
- 
+startServer();
