@@ -12,7 +12,7 @@ The integration involves creating a service layer that abstracts API calls to th
 
 - Created a centralized axios instance with default configuration
 - Added request and response interceptors for error handling
-- Set base URL to `http://localhost:5000`
+- Set base URL to `REACT_APP_API_URL` environment variable
 - Enabled credentials for cross-origin requests
 
 ### Authentication Service (`authService.js`)

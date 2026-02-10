@@ -29,7 +29,7 @@ Routing:
 
 Auth flow:
 - AuthContext manages login, signup, Google auth, logout, and password setup.
-- Axios base URL is http://localhost:5000 with cookies enabled.
+- Axios base URL is set via REACT_APP_API_URL environment variable with cookies enabled.
 - ProtectedRoute redirects unauthenticated users to /signin.
 - PublicRoute redirects authenticated users to role-based home.
 

@@ -82,14 +82,14 @@ This backend project now has comprehensive documentation for understanding, test
    ```
 
 ### 2. Setup & Run Server
-   ```bash
+   ```
    npm install
    npm run dev
-   # Server runs on http://localhost:5000
+   # Server runs on https://courses-production-3bad.up.railway.app
    ```
 
 ### 3. Test the Endpoints
-   ```bash
+   ```
    # Automated testing
    node test-endpoints.js
    
@@ -309,8 +309,8 @@ backend/
 ├── model/                       ← 11 model files
 ├── middleware/                  ← Auth & upload
 ├── config/                      ← Database config
-├── services/                    ← Scheduler
-└── uploads/                     ← File storage
+├── services/                   ← Scheduler
+└── uploads/                    ← File storage
 ```
 
 ---
@@ -341,15 +341,15 @@ backend/
 
 ## 🏆 What's Included
 
-✅ **Complete API Documentation**
-✅ **Architectural Analysis**
-✅ **Testing Guide (102+ endpoints)**
-✅ **Automated Test Suite**
-✅ **Security Audit**
-✅ **Deployment Checklist**
-✅ **Troubleshooting Guide**
-✅ **Code Organization Reference**
-✅ **Recommendations for Improvement**
+✅ **Complete API Documentation**  
+✅ **Architectural Analysis**  
+✅ **Testing Guide (102+ endpoints)**  
+✅ **Automated Test Suite**  
+✅ **Security Audit**  
+✅ **Deployment Checklist**  
+✅ **Troubleshooting Guide**  
+✅ **Code Organization Reference**  
+✅ **Recommendations for Improvement**  
 ✅ **Quick Start Instructions**
 
 ---
@@ -390,4 +390,3 @@ backend/
 ---
 
 *For more information, start with SUMMARY.md and follow the appropriate path for your role.*
-

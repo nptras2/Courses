@@ -1,6 +1,6 @@
 # Backend Endpoints
 
-Base URL: `http://localhost:5000`
+Base URL: `https://courses-production-3bad.up.railway.app`
 
 ## Health
 
