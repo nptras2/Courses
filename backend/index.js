@@ -21,27 +21,14 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// Configure CORS to allow frontend origins. Accepts comma-separated list via ALLOWED_ORIGINS.
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
-  : ["http://localhost:3000", "http://localhost:3001", "https://course-olive-one.vercel.app"];
-
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow non-browser requests (e.g., Postman) where origin is undefined
-    if (!origin) return callback(null, true);
-
-    // Allow if origin explicitly listed
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-
-    // Allow any Vercel preview or project domains to simplify preview testing
-    if (origin.endsWith('.vercel.app')) return callback(null, true);
-
-    // Block otherwise
-    return callback(new Error('CORS not allowed for origin: ' + origin));
-  },
-  credentials: true,
+  origin: [
+    "http://localhost:3000",
+    "https://course-olive-one.vercel.app"
+  ],
+  credentials: true
 }));
+
 
 // Routes
 app.use("/api/auth", authRoute);
